@@ -1,1 +1,13 @@
-Let's look at a few ideas for a project!
+# Usage
+
+```shell
+cd FunProject
+.\build\compile.sh HelloWorld HelloWorld
+```
+
+The compiled .exe can be found in the `./Outputs ` folder
+Run the .exe with
+
+```shell
+.\Outputs\HelloWorld.exe
+```
