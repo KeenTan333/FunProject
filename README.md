@@ -1,4 +1,5 @@
 # Usage
+In Command Prompt or Windows PowerShell, compile the .c file with
 
 ```shell
 bash .\build\compile.sh HelloWorld
