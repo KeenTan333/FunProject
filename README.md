@@ -1,7 +1,6 @@
 # Usage
 
 ```shell
-cd FunProject
 .\build\compile.sh HelloWorld HelloWorld
 ```
 
