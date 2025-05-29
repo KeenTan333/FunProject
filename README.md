@@ -6,6 +6,7 @@ cd FunProject
 ```
 
 The compiled .exe can be found in the `./Outputs ` folder
+
 Run the .exe with
 
 ```shell
