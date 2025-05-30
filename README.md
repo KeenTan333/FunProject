@@ -14,3 +14,10 @@ Run the .exe with
 ```
 
 Try it with other .c files!
+
+
+# List of examples
+1) HelloWorld.c - Prints "Hello World!"
+2) Add.c - Adds 2 floats
+3) NewtonRoot.c - Finds roots of functions numerically with Newton-Raphson method
+4) FuckYou.c - Prints "Fuck You!"
