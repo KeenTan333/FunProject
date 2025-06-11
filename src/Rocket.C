@@ -8,6 +8,9 @@
 #define GRAVITY 9.81f
 #define MAX_THRUST 15.0f
 #define FPS 60
+#define ROCKET_HEIGHT 120.0f
+#define ROCKET_WIDTH 20.0f
+#define GROUND_HEIGHT 100.0f
 
 typedef struct {
     float x, y;
@@ -43,7 +46,7 @@ void update_physics(Rocket *rocket) {
     ////  Simple controller for throttle ////
     // Comment out this section to disable the controller
     // Lands rocket according to reference trajectory
-    double ref = (0.15f * (SCREEN_HEIGHT - 50 - 10 - rocket->y)) + 0.5;
+    double ref = (0.15f * (SCREEN_HEIGHT - GROUND_HEIGHT - (ROCKET_HEIGHT/2) - rocket->y)) + 0.5;
     double err = rocket->vy - ref;
 
     rocket->throttle = atan(10 * err);
@@ -63,7 +66,7 @@ void update_physics(Rocket *rocket) {
     rocket->x += rocket->vx * dT;
     rocket->y += rocket->vy * dT;
 
-    if (rocket->y > SCREEN_HEIGHT - 50 - 10) {
+    if (rocket->y > SCREEN_HEIGHT - GROUND_HEIGHT - (ROCKET_HEIGHT/2)) {
         if (fabs(rocket->vy) > 1.0f) {
             printf("💥 CRASHED! vy=%.2f\n", rocket->vy);
             exit(0);
@@ -79,17 +82,13 @@ void draw(SDL_Renderer *renderer, Rocket *rocket) {
     SDL_RenderClear(renderer);
 
     // Draw ground
-    SDL_SetRenderDrawColor(renderer, 50, 180, 50, 255);
-    SDL_Rect ground = {0, SCREEN_HEIGHT - 50, SCREEN_WIDTH, 50};
+    SDL_SetRenderDrawColor(renderer, GROUND_HEIGHT, 180, GROUND_HEIGHT, 255);
+    SDL_Rect ground = {0, SCREEN_HEIGHT - GROUND_HEIGHT, SCREEN_WIDTH, GROUND_HEIGHT};
     SDL_RenderFillRect(renderer, &ground);
 
-    // Rocket dimensions
-    float w = 5;
-    float h = 20;
-
     // Rocket corners before rotation (relative to center)
-    float hw = w / 2;
-    float hh = h / 2;
+    float hw = ROCKET_WIDTH / 2;
+    float hh = ROCKET_HEIGHT / 2;
 
     float c = cosf(rocket->gimbal);
     float s = sinf(rocket->gimbal);
@@ -113,10 +112,10 @@ void draw(SDL_Renderer *renderer, Rocket *rocket) {
     SDL_RenderDrawLinesF(renderer, points, 5);
 
     // Draw thrust direction
-    float fx = rocket->x + 30 * sinf(rocket->gimbal);
-    float fy = rocket->y + 30 * cosf(rocket->gimbal);
-    SDL_SetRenderDrawColor(renderer, 255, 100, 0, 255);
-    SDL_RenderDrawLineF(renderer, rocket->x, rocket->y, fx, fy);
+    float fx = rocket->x + 50 * sinf(rocket->gimbal);
+    float fy = rocket->y + 100 * rocket->throttle * cosf(rocket->gimbal) + (ROCKET_HEIGHT/2);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderDrawLineF(renderer, rocket->x, rocket->y + (ROCKET_HEIGHT/2), fx, fy);
 
     SDL_RenderPresent(renderer);
 }
@@ -148,10 +147,10 @@ int main(int argc, char *argv[]) {
         update_physics(&rocket);
         draw(renderer, &rocket);
 
-        printf("x=%.1f y=%.1f | vx=%.2f vy=%.2f | throttle=%.2f | gimbal=%.2f°\r",
+        printf("x=%.1f y=%.1f | vx=%.2f vy=%.2f | throttle=%.3f%% | gimbal=%.2f°\r",
                rocket.x, rocket.y,
                rocket.vx, rocket.vy,
-               rocket.throttle,
+               rocket.throttle * 100.0f,
                rocket.gimbal * 180.0f / M_PI);
         fflush(stdout);
 
